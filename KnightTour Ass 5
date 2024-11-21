@@ -1,0 +1,76 @@
+import java.util.*;
+
+public class KnightTour {
+    // Movement arrays for the knight
+    static int[] validx = {-2, -1, 1, 2, 2, 1, -1, -2};
+    static int[] validy = {1, 2, 2, 1, -1, -2, -2, -1};
+    static int boardSize;
+
+    // Backtracking function to solve Knight's Tour
+    static boolean solveKnightTour(int[][] board, int moves, int row, int col, int rows, int cols) {
+        // Base case: all squares are visited
+        if (moves == boardSize) {
+            return true;
+        }
+
+        // Try all possible knight moves
+        for (int i = 0; i < 8; i++) {
+            int nextrow = row + validx[i];
+            int nextcol = col + validy[i];
+
+            // Check if the move is valid
+            if (nextrow >= 0 && nextrow < rows && nextcol >= 0 && nextcol < cols && board[nextrow][nextcol] == -1) {
+                board[nextrow][nextcol] = moves; // Mark the square with the move number
+
+                if (solveKnightTour(board, moves + 1, nextrow, nextcol, rows, cols)) {
+                    return true;
+                }
+
+                // Backtracking
+                board[nextrow][nextcol] = -1;
+            }
+        }
+
+        return false;
+    }
+
+    // Knight's Tour Algorithm
+    static void KnightTourAlgo(int rows, int cols, int x, int y) {
+        int[][] board = new int[rows][cols];
+        boardSize = rows * cols;
+
+        // Initialize the board with -1
+        for (int[] row : board) {
+            Arrays.fill(row, -1);
+        }
+
+        // Start the knight's tour from the initial position
+        board[x][y] = 0; // Starting move
+
+        if (solveKnightTour(board, 1, x, y, rows, cols)) {
+            // Print the solution
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    System.out.print(board[i][j] + "\t");
+                }
+                System.out.println();
+            }
+        } else {
+            System.out.println("No solution exists for the given board size and starting position.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Enter the Row X Column:");
+        int rows = sc.nextInt();
+        int cols = sc.nextInt();
+
+        System.out.println("Enter the Start position (1-based index):");
+        int x = sc.nextInt() - 1;
+        int y = sc.nextInt() - 1;
+
+        KnightTourAlgo(rows, cols, x, y);
+    }
+}
