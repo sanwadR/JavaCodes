@@ -1,0 +1,73 @@
+import java.util.*;
+
+public class Karatsuba  {
+    
+    public static String square(String num) {
+        // Base case for recursion 
+        int len = num.length();
+        if (len == 1) {
+            int n = Integer.parseInt(num);
+            return Integer.toString(n * n); //Base Case
+        }
+        int mid = len / 2;
+        String low = num.substring(mid); // Right half
+        String high = num.substring(0, mid); // Left half
+        String z0 = square(low); // low^2
+        String z2 = square(high); // high^2
+        String z1 = square(addStrings(low, high)); // (low + high)^2
+ // Karatsuba step: (low + high)^2 - low^2 - high^2 gives the cross term
+        z1 = subtractStrings(z1, addStrings(z0, z2));
+ // Apply the powers of 10 based on the split
+        z2 = shiftLeft(z2, 2 * (len - mid)); // high^2 * 10^(2*mid)
+        z1 = shiftLeft(z1, len - mid); // cross term * 10^mid
+        return addStrings(addStrings(z2, z1), z0);
+    }
+    
+    public static String addStrings(String num1, String num2) {
+        StringBuilder result = new StringBuilder();
+        int carry = 0, i = num1.length() - 1, j = num2.length() - 1;
+         while (i >= 0 || j >= 0 || carry > 0) {
+            int sum = carry;
+            if (i >= 0) sum += num1.charAt(i--) - '0';
+            if (j >= 0) sum += num2.charAt(j--) - '0';
+            result.append(sum % 10);
+            carry = sum / 10;
+        }
+          return result.reverse().toString();
+    }
+// Function to subtract num2 from num1 
+    public static String subtractStrings(String num1, String num2) {
+        StringBuilder result = new StringBuilder();
+        int borrow = 0, i = num1.length() - 1, j = num2.length() - 1;
+while (i >= 0 || j >= 0) {
+            int diff = (i >= 0 ? num1.charAt(i--) - '0' : 0) - (j >= 0 ? num2.charAt(j--) - '0' : 0) - borrow;
+            if (diff < 0) {
+                diff += 10;
+                borrow = 1;
+            } else {
+                borrow = 0;
+            }
+            result.append(diff);
+        }
+        // Remove leading zeros
+        while (result.length() > 1 && result.charAt(result.length() - 1) == '0') {
+            result.deleteCharAt(result.length() - 1);
+        }
+ return result.reverse().toString();
+    }
+ // Function to shift the number (string) to the left by appending n zeros (multiply by 10^n)
+    public static String shiftLeft(String num, int n) {
+        StringBuilder result = new StringBuilder(num);
+        for (int i = 0; i < n; i++) {
+            result.append('0');
+        }
+        return result.toString();
+    }
+ // Main function to test the square computation
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String number = sc.nextLine() ;
+        String squared = square(number);
+        System.out.println("Square of " + number + " is: " + squared);
+    }
+}
