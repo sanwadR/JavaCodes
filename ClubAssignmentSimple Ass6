@@ -1,0 +1,61 @@
+import java.util.*;
+public class ClubAssignmentSimple {
+    static int mincost;
+    static int[][] matrix;
+    static int N;
+    static int bestAssignment[];
+    static int claculatecost(int[] assignment){
+        int totalcost =0;
+        for(int i = 0; i<N;i++){
+            totalcost += matrix[i][assignment[i]];
+        }
+        return totalcost;
+    }
+    static void permute(int[] assignment, boolean[] visited, int level){
+        if(level == N){
+            int cost = claculatecost(assignment);
+            if(cost < mincost){
+                mincost = cost;
+                bestAssignment = assignment.clone();
+            }
+            
+        }
+
+        for(int i=0; i<N;i++){
+            if(!visited[i]){
+                visited[i] = true;
+                assignment[level]= i;
+                permute(assignment,visited,level+1);
+                visited[i] = false;
+            }
+        }
+    }
+
+    public static void main(String[] args){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("Enter the numer of students: ");
+        N = sc.nextInt();
+        matrix = new int[N][N];
+        System.out.println("Enter the cost matrix: ");
+        for(int i = 0; i < N; i++){
+            for(int j = 0; j < N; j++){
+                matrix[i][j] = sc.nextInt();
+            }
+        }
+        int[] assignment = new int[N];
+        boolean[] visited = new boolean[N];
+        mincost = Integer.MAX_VALUE;
+        bestAssignment = new int[N];
+        permute(assignment,visited,0);
+
+        System.out.println("The minimum cost is: " + mincost);
+        System.out.println("The assignment of students to clubs is as follows:");
+        for(int i = 0; i<N;i++){
+            System.out.println("Student "+(i+1)+" is assigned to Club "+(bestAssignment[i]+1));
+        }
+
+        sc.close();
+
+    }
+    
+}
