@@ -1,0 +1,59 @@
+import java.util.*;
+
+public class Karatsuba {
+    static long karatsubaAlgo(long x, long y) {
+        if (x < 10 && y < 10) {
+            return x * y;
+        }
+
+        int n = Math.max(String.valueOf(x).length(), String.valueOf(y).length());
+        int n2 = (n + 1) / 2; // Handle odd-length numbers by rounding up
+
+        long powerN2 = (long) Math.pow(10, n2);
+        long a = x / powerN2;
+        long b = x % powerN2;
+        long c = y / powerN2;
+        long d = y % powerN2;
+
+        long ac = karatsubaAlgo(a, c);
+        long bd = karatsubaAlgo(b, d);
+        long ad_plus_bc = karatsubaAlgo(a + b, c + d) - ac - bd;
+
+        long result = ac * (long) Math.pow(10, 2 * n2) + ad_plus_bc * powerN2 + bd;
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("Enter your choice: 1. Multiply 2. Square 3. Exit");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter x:");
+                    long x = sc.nextLong();
+                    System.out.println("Enter y:");
+                    long y = sc.nextLong();
+                    long product = karatsubaAlgo(x, y);
+                    System.out.println("The product is: " + product);
+                    break;
+                case 2:
+                    System.out.println("Enter z:");
+                    long z = sc.nextLong();
+                    long square = karatsubaAlgo(z, z);
+                    System.out.println("The square is: " + square);
+                    break;
+                case 3:
+                    System.out.println("Exiting Program");
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+            }
+        } while (choice != 3);
+
+        sc.close();
+    }
+}
